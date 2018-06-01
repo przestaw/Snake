@@ -29,7 +29,8 @@ public class Game extends  JPanel implements KeyListener, ActionListener
     
     private Timer timer;
     
-    private int delay = 350;
+    private static int startDelay = 350;
+    private int delay;
     
     private int snakePosX;
     private int snakePosY;
@@ -51,21 +52,13 @@ public class Game extends  JPanel implements KeyListener, ActionListener
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
         
-        timer = new Timer(delay,this);
+        timer = new Timer(startDelay,this);
         timer.start();
-        
-        snakePosX = this.sizeX/2;
-        snakePosY = this.sizeY/2;
         
         tailX = new int[this.sizeX*this.sizeY];
         tailY = new int[this.sizeX*this.sizeY];
-        snakeLenght = 3;
-        for(int i = 0; i < snakeLenght; ++i)
-        {
-            tailX[i] = snakePosX;
-            tailY[i] = snakePosY + i;
-        }
-        play = true;
+        
+        play = false;
     }
 
     public void paint(Graphics g)
@@ -102,12 +95,36 @@ public class Game extends  JPanel implements KeyListener, ActionListener
         //g.setFont(Font.getFont("Bold"));
         g.drawString("Score:"+score, (sizeX*5), 10 );
         
+        //draw prees enter to play
+        if(play == false)
+        {
+            g.drawString("Press Enter to play", sizeX*5, sizeY*5);
+        }
         g.dispose();
     }
     
     private void gameover()
     {
         play = false;
+    }
+    
+    
+    private void start()
+    {
+        delay = startDelay;
+        score = 0;
+        snakeLenght = 3;
+        
+        snakePosX = this.sizeX/2;
+        snakePosY = this.sizeY/2;
+        
+        for(int i = 0; i < snakeLenght; ++i)
+        {
+            tailX[i] = snakePosX;
+            tailY[i] = snakePosY + i;
+        }
+        
+        play = true;
     }
     
     private void eaten()
@@ -131,7 +148,9 @@ public class Game extends  JPanel implements KeyListener, ActionListener
     
     private void snakeMove()
     {
-        switch(snakeDirection)
+        if(play == true)
+        {
+            switch(snakeDirection)
             {
                 case up:
                     --snakePosY;
@@ -146,14 +165,15 @@ public class Game extends  JPanel implements KeyListener, ActionListener
                     --snakePosX;
                     break;
             }
-        for(int i = snakeLenght-1 ; i > 0 ; --i)
-        {
-            tailX[i] = tailX[i-1];
-            tailY[i] = tailY[i-1];
-        }
+            for(int i = snakeLenght-1 ; i > 0 ; --i)
+            {
+                tailX[i] = tailX[i-1];
+                tailY[i] = tailY[i-1];
+            }
         
-        tailX[0] = snakePosX;
-        tailY[0] = snakePosY;
+            tailX[0] = snakePosX;
+            tailY[0] = snakePosY;
+        }
     }
     
     private boolean isSnake(int X, int Y)
@@ -191,6 +211,14 @@ public class Game extends  JPanel implements KeyListener, ActionListener
                 snakeDirection = Direction.left;
                 break;
         }
+        
+        if(play != true)
+        {
+            if(ke.getKeyCode() == KeyEvent.VK_ENTER)
+            {
+                start();
+            }
+        }
     }
     
     @Override
@@ -200,17 +228,17 @@ public class Game extends  JPanel implements KeyListener, ActionListener
     @Override
     public void actionPerformed(ActionEvent ae) 
     {
-        if(play != true || snakePosX == 0 || snakePosY == 0 || snakePosX == sizeX || snakePosY == sizeY || isSnake(snakePosX, snakePosY))
+        if(snakePosX == 0 || snakePosY == 0 || snakePosX == sizeX || snakePosY == sizeY || isSnake(snakePosX, snakePosY))
         {
             gameover();
         }else
         {   
+            snakeMove();
             if(snakePosX == cakePosX && snakePosY == cakePosY)
             {
                 eaten();
-            }
-            repaint();
-            snakeMove();
+            } 
         }
+        repaint();
     }
 }
