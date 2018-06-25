@@ -6,10 +6,11 @@
 
 package firtstapp;
 
+import firtstapp.Controller.GameControl;
+import firtstapp.Model.GamePlay;
+import firtstapp.View.GamePlayView;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 
@@ -23,7 +24,7 @@ public class FirtstApp
 {
     static JFrame window;
     static int sizeX = 600;
-    static int sizeY = 400;
+    static int sizeY = 600;
     static int screenHeight;
     static int screenWidth;
     /**
@@ -44,8 +45,15 @@ public class FirtstApp
         
         window.setVisible(true);
         
-        Game game = new Game(sizeX, sizeY);
+        //??
         
-        window.add(game);
+        GamePlay game = new GamePlay(sizeX/10, sizeY/10);
+        GameControl gameControl = new GameControl(game, 300, 5);
+        GamePlayView gameView = new GamePlayView(game, 10);
+        
+        game.addObserver(gameView);
+        
+        window.add(gameView);
+        
     }
 }
