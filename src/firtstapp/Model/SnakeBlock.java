@@ -16,8 +16,13 @@ public class SnakeBlock extends GameObject
         this(0,0);
     }
     
-    SnakeBlock(int posX, int posY)
+    public SnakeBlock(int posX, int posY)
     {
         super(posX, posY);
+    }
+    
+    public SnakeBlock(SnakeBlock orginal)
+    {
+        super(orginal.getPosX(), orginal.getPosY());
     }
 }

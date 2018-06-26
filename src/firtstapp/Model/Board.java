@@ -6,7 +6,6 @@
 package firtstapp.Model;
 
 import java.util.Observable;
-import javax.swing.JPanel;
 
 /**
  *
@@ -46,6 +45,8 @@ public abstract class Board extends Observable
     public void upScore() 
     {
         this.upScore(5);
+        this.setChanged();
+        notifyObservers();
     }
     
     public void resetScore() 
@@ -62,6 +63,8 @@ public abstract class Board extends Observable
     {
         play = true;
         gameover = false;
+        this.setChanged();
+        notifyObservers();
     }
     
     public void pause() 
@@ -87,5 +90,8 @@ public abstract class Board extends Observable
     public void gameover() 
     {
         gameover = true;
+        play = false;
+        this.setChanged();
+        notifyObservers();
     }
 }

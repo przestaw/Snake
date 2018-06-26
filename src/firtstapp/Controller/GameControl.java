@@ -5,111 +5,69 @@
  */
 package firtstapp.Controller;
 
-import firtstapp.Model.GameObject;
+import firtstapp.Model.GameObject.Direction;
 import firtstapp.Model.GamePlay;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.util.Observable;
-import java.util.Observer;
-import javax.swing.Timer;
 
 /**
  *
  * @author przemek
  */
-public class GameControl implements Observer, ActionListener, KeyListener
+public class GameControl
 {
-    private Timer timer;
-    
-    private int delay;
-    private static int startDelay;
-    private static int rampUp;
-    
     private GamePlay game;
     
-    public GameControl(GamePlay game, int startDelay, int rampUp) 
+    public GameControl(GamePlay game) 
     {
-        this.delay = startDelay;
-        this.startDelay = this.delay;
-        this.rampUp = rampUp;
-        this.timer = new Timer(delay, this);
-        
-        this.game = game;
-        
-        timer.start();
-        
+        this.game = game; 
+    }
+
+    private boolean isGameOver()
+    {
+        return false;
     }
     
-    public void rampUpTime()
-    {
-        if(delay > rampUp+1)
-        {
-            delay -= rampUp;
-            timer.setDelay(delay);
-        }
-    }    
-    
-    @Override
-    public void actionPerformed(ActionEvent ae) 
+    public void update()
     {
         if(game.isPlay())
         {
-            if(game.isMovePossible() )
+            if(!isGameOver())
             {
                 game.moveSnake();
+                if(game.getSnakePosX() == game.getCakePosX() && game.getSnakePosY() == game.getCakePosY())
+                {
+                    game.cakeEaten();
+                }
             }else
             {
                 game.gameover();
             }
         }
     }
-
-    @Override
-    public void keyTyped(KeyEvent ke) 
+    
+    public void enterOccured()
     {
-        //nothing to do 
-    }
-
-    @Override
-    public void keyPressed(KeyEvent ke) 
-    {
-        switch(ke.getKeyCode())
+        if (game.isGameover()) 
         {
-            case KeyEvent.VK_UP:
-                game.setSnakeDirection(GameObject.Direction.up);
-                break;
-            case KeyEvent.VK_DOWN:
-                game.setSnakeDirection(GameObject.Direction.down);
-                break;
-            case KeyEvent.VK_RIGHT:
-                game.setSnakeDirection(GameObject.Direction.right);
-                break;
-            case KeyEvent.VK_LEFT:
-                game.setSnakeDirection(GameObject.Direction.left);
-                break;
-            case KeyEvent.VK_ENTER:
-                if(game.isGameover())
-                {
-                    game.restart();
-                }else
-                {
-                    game.start();
-                }
-                break;
+            game.restart();
+        } else 
+        {
+            game.start();
         }
     }
-
-    @Override
-    public void keyReleased(KeyEvent ke) 
+    
+    public void directionOccured(Direction direction)
     {
-        //nothing to do 
+        game.setNextSnakeDirection(direction);
     }
 
-    @Override
-    public void update(Observable o, Object o1) 
+    public void escapeOccured() 
     {
-        
+        if(game.isPlay())
+        {
+            game.pause();
+        }else
+        {
+            game.restart();
+        }
     }
 }

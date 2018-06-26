@@ -11,8 +11,8 @@ package firtstapp.Model;
  */
 public class Cake extends GameObject
 {
-    private int rangeX; 
-    private int rangeY;
+    private static int rangeX; 
+    private static int rangeY;
             
     
     Cake(int posX, int posY, int rangeX, int rangeY)
@@ -36,7 +36,7 @@ public class Cake extends GameObject
     
     public void eaten()
     {
-        this.setPosX((int)(Math.random() * (rangeX-2) +1));
-        this.setPosY((int)(Math.random() * (rangeY-2) +1));
+        this.setPosX((int)(Math.random() * (rangeX-2)) +1);
+        this.setPosY((int)(Math.random() * (rangeY-2)) +1);
     }
 }

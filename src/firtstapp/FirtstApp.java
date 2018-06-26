@@ -23,8 +23,8 @@ import javax.swing.JFrame;
 public class FirtstApp 
 {
     static JFrame window;
-    static int sizeX = 600;
-    static int sizeY = 600;
+    static int sizeX = 900;
+    static int sizeY = 900;
     static int screenHeight;
     static int screenWidth;
     /**
@@ -47,13 +47,14 @@ public class FirtstApp
         
         //??
         
-        GamePlay game = new GamePlay(sizeX/10, sizeY/10);
-        GameControl gameControl = new GameControl(game, 300, 5);
-        GamePlayView gameView = new GamePlayView(game, 10);
+        GamePlay game = new GamePlay(sizeX/30, sizeY/30, 300, 5);
+        GameControl gameControl = new GameControl(game);
+        GamePlayView gameView = new GamePlayView(game, gameControl, 30);
         
         game.addObserver(gameView);
         
-        window.add(gameView);
+        gameView.repaint();
         
+        window.add(gameView);
     }
 }

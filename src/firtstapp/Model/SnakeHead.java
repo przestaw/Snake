@@ -9,7 +9,7 @@ package firtstapp.Model;
  *
  * @author przemek
  */
-public class SnakeHead extends GameObject
+public class SnakeHead extends SnakeBlock
 {
     private SnakeBlock[] tail;
     
@@ -113,7 +113,7 @@ public class SnakeHead extends GameObject
      
     public boolean isSnake(int X, int Y)
     {
-        for(int i = 1; i < snakeLenght ; ++i)
+        for(int i = 0; i < snakeLenght ; ++i)
         {
             if(tail[i].getPosX() == X && tail[i].getPosY() == Y)
                 return true;
@@ -127,25 +127,25 @@ public class SnakeHead extends GameObject
         {
             
             case up:
-                if(direction != direction.down)
+                if(snakeDirection != direction.down)
                 {
                      this.snakeDirection = direction;
                 }
                 break;
             case left:
-                if(direction != direction.right)
+                if(snakeDirection != direction.right)
                 {
                      this.snakeDirection = direction;
                 }
                 break;
             case right:
-                if(direction != direction.left)
+                if(snakeDirection != direction.left)
                 {
                      this.snakeDirection = direction;
                 }
                 break;
             case down:
-                if(direction != direction.up)
+                if(snakeDirection != direction.up)
                 {
                      this.snakeDirection = direction;
                 }
@@ -172,7 +172,8 @@ public class SnakeHead extends GameObject
         }
         for (int i = snakeLenght - 1; i > 0; --i)
         {
-            tail[i] = tail[i - 1];
+            tail[i] = new SnakeBlock(tail[i - 1]);
         }
+        tail[0] = new SnakeBlock((SnakeBlock)this);
     }
 }

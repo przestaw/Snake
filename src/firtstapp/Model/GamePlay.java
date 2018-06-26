@@ -15,21 +15,24 @@ import firtstapp.Model.GameObject.Direction;
 public class GamePlay extends Board 
 {
     private SnakeHead snake;
+    private Direction nextSnakeDirection;
+    
     private final Cake cake;
     
-    private boolean eaten;
+    private int delay;
+    private static int startDelay;
+    private static int rampUp;
     
-    public GamePlay(int sizeX, int sizeY)
+    public GamePlay(int sizeX, int sizeY, int startDelay, int rampUp)
     {
         super(sizeX, sizeY);
         snake = new SnakeHead(sizeX/2, sizeY/2, sizeX*sizeY, 4);
-        cake = new Cake(sizeX/2 + 2, sizeY/2 + 2, sizeX, sizeY);
-        eaten = false;
-    }
-
-    public SnakeHead getSnake() 
-    {
-        return snake;
+        nextSnakeDirection = Direction.up;
+        cake = new Cake(sizeX, sizeY);
+        
+        this.delay = startDelay;
+        this.startDelay = this.delay;
+        this.rampUp = rampUp;
     }
 
     public int getCakePosX() 
@@ -40,6 +43,11 @@ public class GamePlay extends Board
     public int getCakePosY() 
     {
         return cake.getPosY();
+    }
+
+    public int getDelay() 
+    {
+        return delay;
     }
     
     public boolean isSnake(int posX, int posY)
@@ -57,6 +65,11 @@ public class GamePlay extends Board
         return snake.getBlock(which);
     }
     
+    public Direction getNextSnakeDirection()
+    {
+        return nextSnakeDirection;
+    }
+    
     public int getSnakePosX() 
     {
         return snake.getPosX();
@@ -67,30 +80,20 @@ public class GamePlay extends Board
         return snake.getPosY();
     }
     
-    public void setSnakeDirection(Direction direction)
+    public void setNextSnakeDirection(Direction direction)
     {
-        snake.setDirection(direction);
-    }
-    
-    private boolean willEat()
-    {
-        return (snake.getNextPosX() == cake.getPosX() && snake.getNextPosY() == cake.getPosY());  
-    }
-    
-    public boolean isMovePossible()
-    {
-        return (snake.getNextPosX() != 0 && snake.getNextPosX() != this.getSizeX()
-           && snake.getNextPosY() != 0 && snake.getNextPosX() != this.getSizeY());
+        nextSnakeDirection = direction;
     }
     
     public void moveSnake()
     {
-        if (willEat()) 
+        snake.setDirection(nextSnakeDirection);
+        if(snake.getNextPosX() == 0 || snake.getNextPosX() == sizeX
+           || snake.getNextPosY() == 0 || snake.getNextPosY() == sizeY
+           || snake.isSnake(snake.getNextPosX(), snake.getNextPosY()))
         {
-            cakeEaten();
-        }else
-        {
-            cakeNotEaten();
+            gameover();
+            return;
         }
         snake.move();
         this.setChanged();
@@ -100,27 +103,20 @@ public class GamePlay extends Board
     public void cakeEaten()
     {
         this.upScore();
+        snake.ateCake();
+        rampUpDelay();
         updateCake();
-        eaten = true;
-    }
-    
-    private void cakeNotEaten() 
-    {
-        eaten = false;
-    }
-    
-    public boolean isEaten()
-    {
-        return eaten;
     }
     
     public void updateCake()
     {
-        while( (snake.getNextPosX() == cake.getPosX() && snake.getNextPosY() == cake.getPosY())
-                || isSnake(cake.getPosX(), cake.getPosY()) )
-        {
+        do{
             cake.eaten();
-        }
+        }while( (snake.getNextPosX() == cake.getPosX() && snake.getNextPosY() == cake.getPosY())
+                || isSnake(cake.getPosX(), cake.getPosY()) );
+        
+        this.setChanged();
+        notifyObservers();
     }
     
     public void restart()
@@ -129,5 +125,19 @@ public class GamePlay extends Board
         snake = new SnakeHead(sizeX/2, sizeY/2, sizeX*sizeY, 4);
         this.updateCake();
         this.resetScore();
+        this.resetDelay();
+    }
+
+    private void resetDelay() 
+    {
+        delay = startDelay;
+    }
+    
+    private void rampUpDelay()
+    {
+        if(delay > rampUp+1)
+        {
+            delay -= rampUp;
+        }
     }
 }

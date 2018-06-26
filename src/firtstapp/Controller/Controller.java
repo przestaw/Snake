@@ -5,10 +5,6 @@
  */
 package firtstapp.Controller;
 
-import firtstapp.View.MenuView;
-
-import javax.swing.JFrame;
-
 /**
  *
  * @author przemek
